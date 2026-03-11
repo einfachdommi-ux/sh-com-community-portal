@@ -1,0 +1,177 @@
+@charset "utf-8";
+/* CSS Document */
+:root{
+	--bg: #0f1115;
+	--panel: rgba(255,255,255,.06);
+	--panel-2: rgba(255,255,255,.09);
+	--border: rgba(255,255,255,.12);
+	--text: rgba(255,255,255,.9);
+	--muted: rgba(255,255,255,.65);
+	--accent: #f5f5f5; /* Weiß/Metallic passend zum Logo */
+	--accent-2: #9aa3ad; /* kühles Grau */
+	--shadow: 0 20px 60px rgba(0,0,0,.55);
+	--radius: 20px;
+}
+
+html { scroll-behavior: smooth; }
+body{
+background:
+	radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.06), transparent 55%),
+	radial-gradient(700px 500px at 85% 20%, rgba(255,255,255,.05), transparent 55%),
+	radial-gradient(900px 700px at 50% 90%, rgba(255,255,255,.04), transparent 60%),
+	var(--bg);
+	color: var(--text);
+	font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+/* Navbar */
+.navbar{
+backdrop-filter: blur(10px);
+background: rgba(15,17,21,.65);
+border-bottom: 1px solid var(--border);
+}
+.nav-link{ color: var(--muted) !important; }
+.nav-link:hover, .nav-link.active{ color: var(--accent) !important; }
+
+/* Hero */
+.hero{
+padding-top: 6.5rem;
+padding-bottom: 4rem;
+position: relative;
+overflow: hidden;
+}
+.hero::before{
+content:"";
+position:absolute;
+inset:-2px;
+background:
+radial-gradient(600px 300px at 30% 30%, rgba(255,255,255,.08), transparent 60%),
+radial-gradient(500px 300px at 70% 40%, rgba(154,163,173,.10), transparent 60%);
+pointer-events:none;
+opacity:.85;
+mask-image: radial-gradient(circle at 50% 35%, black 55%, transparent 75%);
+}
+
+.brand-badge{
+display:inline-flex;
+gap:.5rem;
+align-items:center;
+padding:.45rem .75rem;
+border:1px solid var(--border);
+background: rgba(255,255,255,.05);
+border-radius: 999px;
+color: var(--muted);
+font-size:.95rem;
+}
+
+.logo-card{
+background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+border: 1px solid var(--border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+padding: 1.25rem;
+}
+.logo-img{
+width: min(360px, 72vw);
+height: auto;
+display:block;
+margin: 0 auto;
+filter: drop-shadow(0 18px 30px rgba(0,0,0,.55));
+}
+
+/* Sections */
+section{ padding: 4.25rem 0; }
+.section-title{
+letter-spacing: .02em;
+font-weight: 800;
+}
+.section-subtitle{
+color: var(--muted);
+max-width: 60ch;
+}
+
+/* Cards */
+.glass{
+background: var(--panel);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+.glass:hover{
+background: var(--panel-2);
+transform: translateY(-2px);
+transition: .2s ease;
+}
+
+.kpi{
+border: 1px solid var(--border);
+border-radius: 16px;
+padding: 1rem 1.1rem;
+background: rgba(255,255,255,.04);
+}
+.kpi .num{
+font-size: 1.6rem;
+font-weight: 800;
+line-height:1.1;
+}
+.kpi .lbl{ color: var(--muted); font-size:.95rem; }
+
+/* Buttons */
+.btn-accent{
+--bs-btn-color: #0b0d10;
+--bs-btn-bg: var(--accent);
+--bs-btn-border-color: var(--accent);
+--bs-btn-hover-bg: #ffffff;
+--bs-btn-hover-border-color: #ffffff;
+--bs-btn-hover-color: #0b0d10;
+border-radius: 999px;
+font-weight: 700;
+}
+.btn-outline-soft{
+--bs-btn-color: var(--accent);
+--bs-btn-border-color: rgba(255,255,255,.22);
+--bs-btn-hover-bg: rgba(255,255,255,.10);
+--bs-btn-hover-border-color: rgba(255,255,255,.30);
+border-radius: 999px;
+font-weight: 700;
+}
+
+/* Divider */
+.soft-divider{
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+margin: 2.2rem 0;
+}
+
+/* Footer */
+footer{
+border-top: 1px solid var(--border);
+background: rgba(0,0,0,.25);
+}
+
+/* Accessibility focus */
+:focus-visible{
+outline: 3px solid rgba(255,255,255,.35);
+outline-offset: 3px;
+border-radius: 12px;
+}
+
+.dropdown-menu{
+  background: rgba(15,17,21,.95);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.55);
+}
+.dropdown-item{ color: rgba(255,255,255,.78); }
+.dropdown-item:hover, .dropdown-item:focus{
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.95);
+}
+
+.server-entry {
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
