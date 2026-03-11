@@ -7,6 +7,7 @@
     <title>Admin - <?= e(config('app.app_name', 'SH-COM Portal')) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= e(base_url('/assets/css/app.css')) ?>" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/u9xub32inhd9dyvr5bw19t4b2jvfb4fg5e1tjz7ky1dgil4t/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body class="admin-body">
 <div class="container-fluid">
