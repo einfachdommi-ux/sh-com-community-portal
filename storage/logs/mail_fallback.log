@@ -1,0 +1,1 @@
+[2026-03-11 20:54:03] SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect string value: '\x98k\xEC\xA7\xD5\x98...' for column `shcom`.`mail_logs`.`error_message` at row 1

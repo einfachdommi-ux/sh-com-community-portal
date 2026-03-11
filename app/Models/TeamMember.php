@@ -9,12 +9,42 @@ class TeamMember extends BaseModel
 
     public function create(array $data): int
     {
-        Database::query('INSERT INTO team_members (user_id, display_name, team_role, bio, image_path, social_links, sort_order, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            $data['user_id'] ?? null, $data['display_name'], $data['team_role'], $data['bio'] ?? null, $data['image_path'] ?? null,
-            !empty($data['social_links']) ? json_encode($data['social_links'], JSON_UNESCAPED_UNICODE) : null,
-            $data['sort_order'] ?? 0, $data['is_active'] ?? 1, now(), now()
-        ]);
+        Database::query(
+            'INSERT INTO team_members (user_id, display_name, team_role, bio, image_path, social_links, sort_order, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                $data['user_id'] ?? null,
+                $data['display_name'],
+                $data['team_role'],
+                $data['bio'] ?? null,
+                $data['image_path'] ?? null,
+                !empty($data['social_links']) ? json_encode($data['social_links'], JSON_UNESCAPED_UNICODE) : null,
+                (int)($data['sort_order'] ?? 0),
+                (int)($data['is_active'] ?? 1),
+                now(),
+                now()
+            ]
+        );
+
         return (int) Database::lastInsertId();
+    }
+
+    public function update(int $id, array $data): void
+    {
+        Database::query(
+            'UPDATE team_members SET user_id = ?, display_name = ?, team_role = ?, bio = ?, image_path = ?, social_links = ?, sort_order = ?, is_active = ?, updated_at = ? WHERE id = ?',
+            [
+                $data['user_id'] ?? null,
+                $data['display_name'],
+                $data['team_role'],
+                $data['bio'] ?? null,
+                $data['image_path'] ?? null,
+                !empty($data['social_links']) ? json_encode($data['social_links'], JSON_UNESCAPED_UNICODE) : null,
+                (int)($data['sort_order'] ?? 0),
+                (int)($data['is_active'] ?? 1),
+                now(),
+                $id,
+            ]
+        );
     }
 
     public function active(): array
@@ -25,5 +55,12 @@ class TeamMember extends BaseModel
     public function countAll(): int
     {
         return (int) Database::query('SELECT COUNT(*) c FROM team_members')->fetch()['c'];
+    }
+
+    public function updateSortOrder(array $ids): void
+    {
+        foreach (array_values($ids) as $index => $id) {
+            Database::query('UPDATE team_members SET sort_order = ?, updated_at = ? WHERE id = ?', [$index + 1, now(), (int)$id]);
+        }
     }
 }

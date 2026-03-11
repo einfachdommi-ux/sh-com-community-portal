@@ -76,6 +76,10 @@ $router->get('/admin/changelogs', [ContentController::class, 'changelogs'], [Adm
 $router->post('/admin/changelogs/store', [ContentController::class, 'changelogStore'], [AdminMiddleware::class]);
 $router->get('/admin/team', [ContentController::class, 'team'], [AdminMiddleware::class]);
 $router->post('/admin/team/store', [ContentController::class, 'teamStore'], [AdminMiddleware::class]);
+$router->get('/admin/team/edit/{id}', [ContentController::class, 'teamEdit'], [AdminMiddleware::class]);
+$router->post('/admin/team/update/{id}', [ContentController::class, 'teamUpdate'], [AdminMiddleware::class]);
+$router->post('/admin/team/delete/{id}', [ContentController::class, 'teamDelete'], [AdminMiddleware::class]);
+$router->post('/admin/team/sort', [ContentController::class, 'teamSort'], [AdminMiddleware::class]);
 $router->get('/admin/navigation', [ContentController::class, 'navigation'], [AdminMiddleware::class]);
 $router->post('/admin/navigation/store', [ContentController::class, 'navigationStore'], [AdminMiddleware::class]);
 

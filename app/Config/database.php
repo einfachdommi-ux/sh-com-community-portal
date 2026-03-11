@@ -1,6 +1,6 @@
 <?php
 return array (
-  'host' => '127.0.0.1',
+  'host' => 'localhost',
   'port' => '3306',
   'database' => 'shcom',
   'username' => 'blgijlok_shcom',
