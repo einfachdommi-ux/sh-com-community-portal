@@ -1,0 +1,25 @@
+:root{
+  --sh-blue:#0b2f55;
+  --sh-red:#d61f26;
+  --sh-gold:#f5c542;
+  --sh-bg:#f4f6f9;
+  --sh-dark:#0f172a;
+}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--sh-bg);color:#111827}
+.sh-navbar,.sh-sidebar,.sh-footer{background:linear-gradient(135deg,var(--sh-blue),#081f39)}
+.sh-navbar{backdrop-filter:blur(12px);box-shadow:0 6px 24px rgba(0,0,0,.15)}
+.navbar .nav-link{opacity:.9}
+.navbar .nav-link:hover,.sh-side-link:hover{opacity:1;color:#fff}
+.sh-side-link{color:#cbd5e1;border-radius:12px;padding:.7rem .9rem}
+.sh-card{border:1px solid rgba(15,23,42,.08);border-radius:1.25rem;box-shadow:0 12px 30px rgba(2,8,23,.08);background:#fff}
+.sh-hero{background:
+ radial-gradient(circle at 10% 20%, rgba(214,31,38,.22), transparent 25%),
+ radial-gradient(circle at 80% 10%, rgba(245,197,66,.18), transparent 20%),
+ linear-gradient(135deg, #081f39, #0b2f55)}
+.hero-logo{max-height:320px;filter:drop-shadow(0 16px 40px rgba(0,0,0,.35))}
+.admin-body{background:#e8edf3}
+.table-dark{--bs-table-bg:#0f172a;--bs-table-striped-bg:#172136;--bs-table-hover-bg:#1e293b}
+.btn-danger{background:var(--sh-red);border-color:var(--sh-red)}
+.btn-danger:hover{background:#b91c1c;border-color:#b91c1c}
+.form-control,.form-select{border-radius:.9rem;padding:.8rem 1rem}
+.card-body h1,.card-body h2,.card-body h3{color:var(--sh-blue)}
