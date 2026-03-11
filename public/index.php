@@ -56,36 +56,30 @@ $router->get('/team', [TeamController::class, 'index']);
 $router->get('/members', [TeamController::class, 'members']);
 $router->get('/page/{slug}', [PageController::class, 'show']);
 
-
 // Admin
 $router->get('/admin', [DashboardController::class, 'index'], [AdminMiddleware::class]);
 $router->get('/admin/users', [UserController::class, 'index'], [AdminMiddleware::class]);
 $router->post('/admin/users/store', [UserController::class, 'store'], [AdminMiddleware::class]);
 
-// ===============================
-// Admin Rollen System Routes
-// ===============================
 $router->get('/admin/roles', [RoleController::class, 'index'], [AdminMiddleware::class]);
 $router->post('/admin/roles/store', [RoleController::class, 'store'], [AdminMiddleware::class]);
+$router->get('/admin/roles/edit/{id}', [RoleController::class, 'edit'], [AdminMiddleware::class]);
+$router->post('/admin/roles/update/{id}', [RoleController::class, 'update'], [AdminMiddleware::class]);
+$router->post('/admin/roles/delete/{id}', [RoleController::class, 'delete'], [AdminMiddleware::class]);
 $router->post('/admin/roles/permissions', [RoleController::class, 'permissions'], [AdminMiddleware::class]);
-// ===============================
-// Admin Permission System Routes
-// ===============================
+
 $router->get('/admin/permissions', [PermissionController::class, 'index'], [AdminMiddleware::class]);
 $router->post('/admin/permissions/store', [PermissionController::class, 'store'], [AdminMiddleware::class]);
+$router->get('/admin/permissions/edit/{id}', [PermissionController::class, 'edit'], [AdminMiddleware::class]);
+$router->post('/admin/permissions/update/{id}', [PermissionController::class, 'update'], [AdminMiddleware::class]);
+$router->post('/admin/permissions/delete/{id}', [PermissionController::class, 'delete'], [AdminMiddleware::class]);
 
-// ===============================
-// Admin Pages System Routes
-// ===============================
 $router->get('/admin/pages', [ContentController::class, 'pages'], [AdminMiddleware::class]);
 $router->post('/admin/pages/store', [ContentController::class, 'pageStore'], [AdminMiddleware::class]);
 $router->get('/admin/pages/edit/{id}', [ContentController::class, 'pageEdit'], [AdminMiddleware::class]);
 $router->post('/admin/pages/update/{id}', [ContentController::class, 'pageUpdate'], [AdminMiddleware::class]);
 $router->post('/admin/pages/delete/{id}', [ContentController::class, 'pageDelete'], [AdminMiddleware::class]);
 
-// ===============================
-// Admin News System Routes
-// ===============================
 $router->get('/admin/news', [ContentController::class, 'news'], [AdminMiddleware::class]);
 $router->post('/admin/news/store', [ContentController::class, 'newsStore'], [AdminMiddleware::class]);
 $router->get('/admin/news/edit/{id}', [ContentController::class, 'newsEdit'], [AdminMiddleware::class]);
@@ -94,18 +88,26 @@ $router->post('/admin/news/delete/{id}', [ContentController::class, 'newsDelete'
 
 $router->get('/admin/changelogs', [ContentController::class, 'changelogs'], [AdminMiddleware::class]);
 $router->post('/admin/changelogs/store', [ContentController::class, 'changelogStore'], [AdminMiddleware::class]);
+$router->get('/admin/changelogs/edit/{id}', [ContentController::class, 'changelogEdit'], [AdminMiddleware::class]);
+$router->post('/admin/changelogs/update/{id}', [ContentController::class, 'changelogUpdate'], [AdminMiddleware::class]);
+$router->post('/admin/changelogs/delete/{id}', [ContentController::class, 'changelogDelete'], [AdminMiddleware::class]);
+
 $router->get('/admin/team', [ContentController::class, 'team'], [AdminMiddleware::class]);
 $router->post('/admin/team/store', [ContentController::class, 'teamStore'], [AdminMiddleware::class]);
+$router->get('/admin/team/edit/{id}', [ContentController::class, 'teamEdit'], [AdminMiddleware::class]);
+$router->post('/admin/team/update/{id}', [ContentController::class, 'teamUpdate'], [AdminMiddleware::class]);
+$router->post('/admin/team/delete/{id}', [ContentController::class, 'teamDelete'], [AdminMiddleware::class]);
+$router->post('/admin/team/sort', [ContentController::class, 'teamSort'], [AdminMiddleware::class]);
+
 $router->get('/admin/navigation', [ContentController::class, 'navigation'], [AdminMiddleware::class]);
 $router->post('/admin/navigation/store', [ContentController::class, 'navigationStore'], [AdminMiddleware::class]);
+$router->get('/admin/navigation/edit/{id}', [ContentController::class, 'navigationEdit'], [AdminMiddleware::class]);
+$router->post('/admin/navigation/update/{id}', [ContentController::class, 'navigationUpdate'], [AdminMiddleware::class]);
+$router->post('/admin/navigation/delete/{id}', [ContentController::class, 'navigationDelete'], [AdminMiddleware::class]);
 
 $router->get('/admin/audit-logs', [LogController::class, 'audit'], [AdminMiddleware::class]);
 $router->get('/admin/mail-logs', [LogController::class, 'mail'], [AdminMiddleware::class]);
 $router->get('/admin/db-tools', [DbToolsController::class, 'index'], [AdminMiddleware::class]);
 $router->post('/admin/db-tools/run', [DbToolsController::class, 'run'], [AdminMiddleware::class]);
-
-$router->get('/admin/pages/edit/{id}', [ContentController::class, 'pageEdit'], [AdminMiddleware::class]);
-$router->post('/admin/pages/update/{id}', [ContentController::class, 'pageUpdate'], [AdminMiddleware::class]);
-$router->post('/admin/pages/delete/{id}', [ContentController::class, 'pageDelete'], [AdminMiddleware::class]);
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

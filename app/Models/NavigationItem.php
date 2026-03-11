@@ -2,7 +2,6 @@
 namespace App\Models;
 
 use App\Core\Auth;
-use App\Core\Database;
 
 class NavigationItem extends BaseModel
 {
@@ -10,21 +9,31 @@ class NavigationItem extends BaseModel
 
     public function create(array $data): int
     {
-        Database::query('INSERT INTO navigation_items (parent_id, area, label, route, icon, permission_slug, sort_order, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            $data['parent_id'] ?? null, $data['area'], $data['label'], $data['route'], $data['icon'] ?? null,
-            $data['permission_slug'] ?? null, $data['sort_order'] ?? 0, $data['is_active'] ?? 1, now(), now()
-        ]);
-        return (int) Database::lastInsertId();
+        $data['created_at'] = $data['created_at'] ?? now();
+        $data['updated_at'] = $data['updated_at'] ?? now();
+        return parent::create($data);
     }
 
-    public function byArea(string $area): array
+    public function update(int $id, array $data): void
     {
-        $items = Database::query('SELECT * FROM navigation_items WHERE area = ? AND is_active = 1 ORDER BY sort_order ASC, id ASC', [$area])->fetchAll();
-        return array_values(array_filter($items, function ($item) use ($area) {
+        $data['updated_at'] = now();
+        $this->updateFields($id, $data);
+    }
+
+    public function forArea(string $area): array
+    {
+        $items = $this->all('sort_order ASC, id ASC');
+
+        return array_values(array_filter($items, function (array $item) use ($area): bool {
+            if (($item['area'] ?? '') !== $area) {
+                return false;
+            }
+
             if (empty($item['permission_slug'])) {
                 return true;
             }
-            return Auth::check() && Auth::hasPermission($item['permission_slug']);
+
+            return Auth::check() && Auth::hasPermission((string) $item['permission_slug']);
         }));
     }
 }

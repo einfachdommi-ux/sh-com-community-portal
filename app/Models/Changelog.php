@@ -9,16 +9,15 @@ class Changelog extends BaseModel
 
     public function create(array $data): int
     {
-        Database::query('INSERT INTO changelogs (version, title, change_type, content, visibility, released_at, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-            $data['version'], $data['title'], $data['change_type'], $data['content'], $data['visibility'] ?? 'public',
-            $data['released_at'], $data['created_by'] ?? null, now(), now()
-        ]);
-        return (int) Database::lastInsertId();
+        $data['created_at'] = $data['created_at'] ?? now();
+        $data['updated_at'] = $data['updated_at'] ?? now();
+        return parent::create($data);
     }
 
-    public function latest(): array
+    public function update(int $id, array $data): void
     {
-        return Database::query('SELECT c.*, u.username creator_name FROM changelogs c LEFT JOIN users u ON u.id = c.created_by ORDER BY c.released_at DESC, c.id DESC')->fetchAll();
+        $data['updated_at'] = now();
+        $this->updateFields($id, $data);
     }
 
     public function countAll(): int

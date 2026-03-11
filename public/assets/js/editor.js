@@ -4,15 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     tinymce.init({
-        selector: '.html-editor',
-        height: 500,
+        selector: 'textarea.editor',
+        height: 520,
         menubar: true,
-        plugins: 'anchor autolink charmap code codesample fullscreen help image insertdatetime link lists media preview searchreplace table visualblocks wordcount',
-        toolbar: 'undo redo | styles | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image media table | code preview fullscreen',
         branding: false,
         promotion: false,
-        relative_urls: false,
-        remove_script_host: false,
-        convert_urls: true
+        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+        toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link table image media | code preview fullscreen',
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
     });
 });

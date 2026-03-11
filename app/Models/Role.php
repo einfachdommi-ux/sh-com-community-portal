@@ -9,14 +9,19 @@ class Role extends BaseModel
 
     public function create(array $data): int
     {
-        Database::query('INSERT INTO roles (name, slug, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?)', [
-            $data['name'], $data['slug'], $data['description'] ?? null, now(), now()
-        ]);
-        return (int) Database::lastInsertId();
+        $data['created_at'] = $data['created_at'] ?? now();
+        $data['updated_at'] = $data['updated_at'] ?? now();
+        return parent::create($data);
     }
 
-    public function allWithPermissions(): array
+    public function update(int $id, array $data): void
     {
-        return Database::query('SELECT * FROM roles ORDER BY name')->fetchAll();
+        $data['updated_at'] = now();
+        $this->updateFields($id, $data);
+    }
+
+    public function countAll(): int
+    {
+        return (int) Database::query('SELECT COUNT(*) c FROM roles')->fetch()['c'];
     }
 }

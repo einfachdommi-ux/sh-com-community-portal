@@ -7,6 +7,48 @@ abstract class BaseModel
 {
     protected string $table;
 
+    public function create(array $data): int
+    {
+        $columns = array_keys($data);
+        $placeholders = array_fill(0, count($columns), '?');
+        $values = array_values($data);
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $this->table,
+            implode(', ', $columns),
+            implode(', ', $placeholders)
+        );
+
+        Database::query($sql, $values);
+
+        return (int) Database::lastInsertId();
+    }
+
+    public function updateFields(int $id, array $data): void
+    {
+        if ($data === []) {
+            return;
+        }
+
+        $set = [];
+        $values = [];
+        foreach ($data as $column => $value) {
+            $set[] = $column . ' = ?';
+            $values[] = $value;
+        }
+
+        $values[] = $id;
+
+        $sql = sprintf(
+            'UPDATE %s SET %s WHERE id = ?',
+            $this->table,
+            implode(', ', $set)
+        );
+
+        Database::query($sql, $values);
+    }
+
     public function all(string $orderBy = 'id DESC'): array
     {
         return Database::query("SELECT * FROM {$this->table} ORDER BY {$orderBy}")->fetchAll();
