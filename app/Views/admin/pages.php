@@ -1,26 +1,89 @@
-<h1 class="mb-4">Seiten</h1>
-<div class="row g-4">
-  <div class="col-xl-5">
-    <div class="card sh-card"><div class="card-body">
-      <form method="post" action="<?= e(base_url('/admin/pages/store')) ?>">
-        <?= csrf_field() ?>
-        <div class="mb-3"><label class="form-label">Titel</label><input class="form-control" name="title" required></div>
-        <div class="mb-3"><label class="form-label">Slug</label><input class="form-control" name="slug" required></div>
-        <div class="mb-3"><label class="form-label">Meta Title</label><input class="form-control" name="meta_title"></div>
-        <div class="mb-3"><label class="form-label">Meta Description</label><textarea class="form-control" name="meta_description"></textarea></div>
-        <div class="mb-3"><label class="form-label">Inhalt</label><textarea class="form-control" name="content" rows="8" required></textarea></div>
-        <div class="row g-3">
-          <div class="col-md-6"><label class="form-label">Sichtbarkeit</label><select class="form-select" name="visibility"><option>public</option><option>members</option><option>admin</option></select></div>
-          <div class="col-md-6"><label class="form-label">Status</label><select class="form-select" name="status"><option>draft</option><option>published</option></select></div>
+<?php /** @var array $pages */ ?>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Seitenverwaltung</h1>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header"><strong>Neue Seite</strong></div>
+        <div class="card-body">
+            <form method="post" action="/admin/pages/store" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Titel</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Slug</label>
+                    <input type="text" name="slug" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Meta Title</label>
+                    <input type="text" name="meta_title" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Meta Description</label>
+                    <input type="text" name="meta_description" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Sichtbarkeit</label>
+                    <select name="visibility" class="form-select">
+                        <option value="public">public</option>
+                        <option value="members">members</option>
+                        <option value="admin">admin</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="draft">draft</option>
+                        <option value="published">published</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Inhalt</label>
+                    <textarea name="content" class="form-control html-editor" rows="10"></textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Seite speichern</button>
+                </div>
+            </form>
         </div>
-        <button class="btn btn-danger w-100 mt-3">Seite speichern</button>
-      </form>
-    </div></div>
-  </div>
-  <div class="col-xl-7">
-    <div class="card sh-card"><div class="card-body"><div class="table-responsive"><table class="table table-dark">
-      <thead><tr><th>Titel</th><th>Slug</th><th>Status</th><th>Sichtbarkeit</th></tr></thead>
-      <tbody><?php foreach ($pages as $item): ?><tr><td><?= e($item['title']) ?></td><td><?= e($item['slug']) ?></td><td><?= e($item['status']) ?></td><td><?= e($item['visibility']) ?></td></tr><?php endforeach; ?></tbody>
-    </table></div></div></div>
-  </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header"><strong>Vorhandene Seiten</strong></div>
+        <div class="card-body table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Titel</th>
+                        <th>Slug</th>
+                        <th>Status</th>
+                        <th>Sichtbarkeit</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pages as $page): ?>
+                        <tr>
+                            <td><?= (int)$page['id'] ?></td>
+                            <td><?= htmlspecialchars($page['title']) ?></td>
+                            <td><?= htmlspecialchars($page['slug']) ?></td>
+                            <td><?= htmlspecialchars($page['status']) ?></td>
+                            <td><?= htmlspecialchars($page['visibility']) ?></td>
+                            <td>
+                                <a href="/admin/pages/edit/<?= (int)$page['id'] ?>" class="btn btn-sm btn-warning">Bearbeiten</a>
+                                <form method="post" action="/admin/pages/delete/<?= (int)$page['id'] ?>" class="d-inline" onsubmit="return confirm('Seite wirklich löschen?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="/assets/js/editor.js"></script>

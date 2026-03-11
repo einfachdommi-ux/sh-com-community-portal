@@ -19,6 +19,7 @@ class NewsController extends Controller
             http_response_code(404);
             exit('News nicht gefunden');
         }
+
         $this->view('front/news_show', compact('article'));
     }
 }

@@ -1,6 +1,9 @@
-<section class="container py-5">
-  <article class="card sh-card"><div class="card-body p-4 p-lg-5">
-    <h1><?= e($page['title']) ?></h1>
-    <div><?= nl2br(e($page['content'])) ?></div>
-  </div></article>
-</section>
+<?php /** @var array $page */ ?>
+<div class="container py-5">
+    <article class="mx-auto" style="max-width: 900px;">
+        <h1 class="mb-4"><?= htmlspecialchars($page['title']) ?></h1>
+        <div class="content-area">
+            <?= $page['content'] ?>
+        </div>
+    </article>
+</div>

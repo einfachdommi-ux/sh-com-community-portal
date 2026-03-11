@@ -1,0 +1,9 @@
+Ergänze in public/index.php im Admin-Bereich diese Routen:
+
+$router->get('/admin/pages/edit/{id}', [ContentController::class, 'pageEdit'], [AdminMiddleware::class]);
+$router->post('/admin/pages/update/{id}', [ContentController::class, 'pageUpdate'], [AdminMiddleware::class]);
+$router->post('/admin/pages/delete/{id}', [ContentController::class, 'pageDelete'], [AdminMiddleware::class]);
+
+$router->get('/admin/news/edit/{id}', [ContentController::class, 'newsEdit'], [AdminMiddleware::class]);
+$router->post('/admin/news/update/{id}', [ContentController::class, 'newsUpdate'], [AdminMiddleware::class]);
+$router->post('/admin/news/delete/{id}', [ContentController::class, 'newsDelete'], [AdminMiddleware::class]);

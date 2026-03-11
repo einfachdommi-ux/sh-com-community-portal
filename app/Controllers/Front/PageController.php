@@ -13,6 +13,7 @@ class PageController extends Controller
             http_response_code(404);
             exit('Seite nicht gefunden');
         }
+
         $this->view('front/page', compact('page'));
     }
 }
