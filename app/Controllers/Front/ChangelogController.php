@@ -8,7 +8,7 @@ class ChangelogController extends Controller
 {
     public function index(): void
     {
-        $items = (new Changelog())->latest();
+        $items = (new Changelog())->latest(50);
         $this->view('front/changelog_index', compact('items'));
     }
 }

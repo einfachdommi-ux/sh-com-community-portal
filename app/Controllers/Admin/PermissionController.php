@@ -18,9 +18,9 @@ class PermissionController extends Controller
         $this->requirePost();
 
         $id = (new Permission())->create([
-            'name' => trim((string) ($_POST['name'] ?? '')),
-            'slug' => trim((string) ($_POST['slug'] ?? '')),
-            'description' => trim((string) ($_POST['description'] ?? '')),
+            'name' => $_POST['name'],
+            'slug' => $_POST['slug'],
+            'description' => $_POST['description'] ?? null,
         ]);
 
         Logger::audit('permissions', 'create', 'permission', $id);
@@ -31,13 +31,12 @@ class PermissionController extends Controller
     public function edit(int $id): void
     {
         $permission = (new Permission())->find($id);
-
         if (!$permission) {
             flash('error', 'Permission nicht gefunden.');
             redirect('/admin/permissions');
         }
 
-        $this->view('admin/permissions/edit', compact('permission'), 'backend');
+        $this->view('admin/permission_edit', compact('permission'), 'backend');
     }
 
     public function update(int $id): void
@@ -45,22 +44,21 @@ class PermissionController extends Controller
         $this->requirePost();
 
         $model = new Permission();
-        $old = $model->find($id);
+        $permission = $model->find($id);
 
-        if (!$old) {
+        if (!$permission) {
             flash('error', 'Permission nicht gefunden.');
             redirect('/admin/permissions');
         }
 
         $data = [
-            'name' => trim((string) ($_POST['name'] ?? '')),
-            'slug' => trim((string) ($_POST['slug'] ?? '')),
-            'description' => trim((string) ($_POST['description'] ?? '')),
+            'name' => trim((string)($_POST['name'] ?? '')),
+            'slug' => trim((string)($_POST['slug'] ?? '')),
+            'description' => trim((string)($_POST['description'] ?? '')) ?: null,
         ];
 
-        $model->update($id, $data);
-        Logger::audit('permissions', 'update', 'permission', $id, $old, $data);
-
+        $model->updateFields($id, $data);
+        Logger::audit('permissions', 'update', 'permission', $id, $permission, $data);
         flash('success', 'Permission aktualisiert.');
         redirect('/admin/permissions');
     }
@@ -70,16 +68,15 @@ class PermissionController extends Controller
         $this->requirePost();
 
         $model = new Permission();
-        $old = $model->find($id);
+        $permission = $model->find($id);
 
-        if (!$old) {
+        if (!$permission) {
             flash('error', 'Permission nicht gefunden.');
             redirect('/admin/permissions');
         }
 
         $model->delete($id);
-        Logger::audit('permissions', 'delete', 'permission', $id, $old, null);
-
+        Logger::audit('permissions', 'delete', 'permission', $id, $permission, null);
         flash('success', 'Permission gelöscht.');
         redirect('/admin/permissions');
     }
