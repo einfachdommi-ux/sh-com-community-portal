@@ -20,7 +20,7 @@ class NavigationItem extends BaseModel
         $this->updateFields($id, $data);
     }
 
-    public function forArea(string $area): array
+    public function byArea(string $area): array
     {
         $items = $this->all('sort_order ASC, id ASC');
 

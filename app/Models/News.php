@@ -30,6 +30,20 @@ class News extends BaseModel
         return $row ?: null;
     }
 
+    public function published(int $limit = 10): array
+    {
+        $limit = max(1, (int)$limit);
+
+        return Database::query("
+            SELECT n.*, u.username AS author_name
+            FROM news n
+            LEFT JOIN users u ON u.id = n.author_id
+            WHERE n.status = 'published'
+            ORDER BY COALESCE(n.published_at, n.created_at) DESC, n.id DESC
+            LIMIT {$limit}
+        ")->fetchAll();
+    }
+
     public function countAll(): int
     {
         return (int) Database::query('SELECT COUNT(*) c FROM news')->fetch()['c'];
