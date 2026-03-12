@@ -38,6 +38,8 @@ use App\Controllers\Admin\ContentController;
 use App\Controllers\Admin\LogController;
 use App\Controllers\Admin\DbToolsController;
 use App\Middleware\AdminMiddleware;
+use App\Controllers\Front\ProfileController;
+use App\Middleware\AuthMiddleware;
 
 $router = new Router();
 
@@ -55,6 +57,9 @@ $router->get('/changelog', [ChangelogController::class, 'index']);
 $router->get('/team', [TeamController::class, 'index']);
 $router->get('/members', [TeamController::class, 'members']);
 $router->get('/page/{slug}', [PageController::class, 'show']);
+$router->get('/profile', [ProfileController::class, 'index'], [AuthMiddleware::class]);
+$router->post('/profile/update', [ProfileController::class, 'update'], [AuthMiddleware::class]);
+$router->post('/profile/password', [ProfileController::class, 'password'], [AuthMiddleware::class]);
 
 // Admin
 $router->get('/admin', [DashboardController::class, 'index'], [AdminMiddleware::class]);

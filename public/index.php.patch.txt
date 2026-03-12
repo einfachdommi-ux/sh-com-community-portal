@@ -1,9 +1,10 @@
-Ergänze in public/index.php im Admin-Bereich diese Routen:
+SH-COM Portal v1.3 – Änderungen für public/index.php
 
-$router->get('/admin/pages/edit/{id}', [ContentController::class, 'pageEdit'], [AdminMiddleware::class]);
-$router->post('/admin/pages/update/{id}', [ContentController::class, 'pageUpdate'], [AdminMiddleware::class]);
-$router->post('/admin/pages/delete/{id}', [ContentController::class, 'pageDelete'], [AdminMiddleware::class]);
+1. Im use-Block ergänzen:
+use App\Controllers\Front\ProfileController;
+use App\Middleware\AuthMiddleware;
 
-$router->get('/admin/news/edit/{id}', [ContentController::class, 'newsEdit'], [AdminMiddleware::class]);
-$router->post('/admin/news/update/{id}', [ContentController::class, 'newsUpdate'], [AdminMiddleware::class]);
-$router->post('/admin/news/delete/{id}', [ContentController::class, 'newsDelete'], [AdminMiddleware::class]);
+2. Im Frontend-Routing direkt nach /logout oder an einer passenden Stelle ergänzen:
+$router->get('/profile', [ProfileController::class, 'index'], [AuthMiddleware::class]);
+$router->post('/profile/update', [ProfileController::class, 'update'], [AuthMiddleware::class]);
+$router->post('/profile/password', [ProfileController::class, 'password'], [AuthMiddleware::class]);

@@ -1,0 +1,9 @@
+SH-COM Portal v1.3 – Änderungen für app/Views/layouts/frontend.php
+
+Ergänze im eingeloggten User-Menü oder in der Navbar einen Link zum Profil:
+
+<a href="/profile">Profil</a>
+
+Falls du bereits ein Dropdown für eingeloggte User hast, füge dort ein:
+
+<a class="dropdown-item" href="/profile">Mein Profil</a>

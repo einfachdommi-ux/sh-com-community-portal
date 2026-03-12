@@ -13,6 +13,12 @@ class User extends BaseModel
         return $row ?: null;
     }
 
+    public function findByUsername(string $username): ?array
+    {
+        $row = Database::query('SELECT * FROM users WHERE username = ?', [$username])->fetch();
+        return $row ?: null;
+    }
+
     public function create(array $data): int
     {
         Database::query(
@@ -24,15 +30,22 @@ class User extends BaseModel
                 $data['email_verification_token'] ?? null, now(), now()
             ]
         );
+
         return (int) Database::lastInsertId();
     }
 
     public function verifyByToken(string $token): bool
     {
         $row = Database::query('SELECT id FROM users WHERE email_verification_token = ?', [$token])->fetch();
-        if (!$row) return false;
+        if (!$row) {
+            return false;
+        }
 
-        Database::query('UPDATE users SET is_verified = 1, email_verification_token = NULL, updated_at = ? WHERE id = ?', [now(), $row['id']]);
+        Database::query(
+            'UPDATE users SET is_verified = 1, email_verification_token = NULL, updated_at = ? WHERE id = ?',
+            [now(), $row['id']]
+        );
+
         return true;
     }
 
@@ -57,15 +70,20 @@ class User extends BaseModel
              WHERE ur.user_id = ? AND p.slug = ?',
             [$userId, $permissionSlug]
         )->fetch();
+
         return !empty($row['c']);
     }
 
     public function hasRole(int $userId, string $roleSlug): bool
     {
         $row = Database::query(
-            'SELECT COUNT(*) c FROM user_roles ur JOIN roles r ON r.id = ur.role_id WHERE ur.user_id = ? AND r.slug = ?',
+            'SELECT COUNT(*) c
+             FROM user_roles ur
+             JOIN roles r ON r.id = ur.role_id
+             WHERE ur.user_id = ? AND r.slug = ?',
             [$userId, $roleSlug]
         )->fetch();
+
         return !empty($row['c']);
     }
 
@@ -83,5 +101,32 @@ class User extends BaseModel
     public function countAll(): int
     {
         return (int) Database::query('SELECT COUNT(*) c FROM users')->fetch()['c'];
+    }
+
+    public function updateProfile(int $id, array $data): void
+    {
+        Database::query(
+            'UPDATE users
+             SET username = ?, email = ?, first_name = ?, last_name = ?, bio = ?, discord = ?, updated_at = ?
+             WHERE id = ?',
+            [
+                $data['username'] ?? null,
+                $data['email'] ?? null,
+                $data['first_name'] ?? null,
+                $data['last_name'] ?? null,
+                $data['bio'] ?? null,
+                $data['discord'] ?? null,
+                now(),
+                $id,
+            ]
+        );
+    }
+
+    public function updatePassword(int $id, string $passwordHash): void
+    {
+        Database::query(
+            'UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?',
+            [$passwordHash, now(), $id]
+        );
     }
 }
