@@ -103,30 +103,44 @@ class User extends BaseModel
         return (int) Database::query('SELECT COUNT(*) c FROM users')->fetch()['c'];
     }
 
-    public function updateProfile(int $id, array $data): void
+    public function updateProfile(int $id, array $data): bool
     {
-        Database::query(
-            'UPDATE users
-             SET username = ?, email = ?, first_name = ?, last_name = ?, bio = ?, discord = ?, updated_at = ?
-             WHERE id = ?',
-            [
-                $data['username'] ?? null,
-                $data['email'] ?? null,
-                $data['first_name'] ?? null,
-                $data['last_name'] ?? null,
-                $data['bio'] ?? null,
-                $data['discord'] ?? null,
-                now(),
-                $id,
-            ]
-        );
+        $stmt = $this->db->prepare("
+            UPDATE users
+            SET first_name = ?,
+                last_name = ?,
+                username = ?,
+                email = ?,
+                bio = ?,
+                discord = ?,
+                avatar = ?,
+                website = ?,
+                location = ?,
+                is_public_profile = ?,
+                show_email_public = ?,
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+
+        return $stmt->execute([
+            $data['first_name'] ?? '',
+            $data['last_name'] ?? '',
+            $data['username'] ?? '',
+            $data['email'] ?? '',
+            $data['bio'] ?? '',
+            $data['discord'] ?? '',
+            $data['avatar'] ?? '',
+            $data['website'] ?? '',
+            $data['location'] ?? '',
+            (int)($data['is_public_profile'] ?? 0),
+            (int)($data['show_email_public'] ?? 0),
+            $id,
+        ]);
     }
 
-    public function updatePassword(int $id, string $passwordHash): void
+    public function updatePassword(int $id, string $passwordHash): bool
     {
-        Database::query(
-            'UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?',
-            [$passwordHash, now(), $id]
-        );
+        $stmt = $this->db->prepare("UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?");
+        return $stmt->execute([$passwordHash, $id]);
     }
-}
+    }

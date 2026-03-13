@@ -40,6 +40,10 @@ use App\Controllers\Admin\DbToolsController;
 use App\Middleware\AdminMiddleware;
 use App\Controllers\Front\ProfileController;
 use App\Middleware\AuthMiddleware;
+use App\Controllers\Front\HofController;
+use App\Controllers\Front\HofDashboardController;
+use App\Controllers\Front\FieldsController;
+use App\Controllers\Admin\AdminFarmsController;
 
 $router = new Router();
 
@@ -59,7 +63,37 @@ $router->get('/members', [TeamController::class, 'members']);
 $router->get('/page/{slug}', [PageController::class, 'show']);
 $router->get('/profile', [ProfileController::class, 'index'], [AuthMiddleware::class]);
 $router->post('/profile/update', [ProfileController::class, 'update'], [AuthMiddleware::class]);
-$router->post('/profile/password', [ProfileController::class, 'password'], [AuthMiddleware::class]);
+$router->post('/profile/security', [ProfileController::class, 'security'], [AuthMiddleware::class]);
+$router->get('/profile/{username}', [ProfileController::class, 'public']);
+// ===========================
+// LS 25 Portal
+// ===========================
+
+$router->get('/hof', [HofController::class, 'index'], [AuthMiddleware::class]);
+$router->post('/hof/join', [HofController::class, 'join'], [AuthMiddleware::class]);
+$router->get('/hof/leave-confirm', [HofController::class, 'leaveConfirm'], [AuthMiddleware::class]);
+$router->post('/hof/leave', [HofController::class, 'leave'], [AuthMiddleware::class]);
+$router->post('/hof/password', [HofController::class, 'setPassword'], [AuthMiddleware::class]);
+$router->post('/hof/invite/create', [HofController::class, 'createInvite'], [AuthMiddleware::class]);
+$router->get('/hof/invite/{token}', [HofController::class, 'invite'], [AuthMiddleware::class]);
+$router->post('/hof/member/remove', [HofController::class, 'removeMember'], [AuthMiddleware::class]);
+$router->get('/hof/dashboard', [HofDashboardController::class, 'index'], [AuthMiddleware::class]);
+
+$router->get('/fields', [FieldsController::class, 'index'], [AuthMiddleware::class]);
+$router->get('/fields/create', [FieldsController::class, 'create'], [AuthMiddleware::class]);
+$router->post('/fields/store', [FieldsController::class, 'store'], [AuthMiddleware::class]);
+$router->get('/fields/edit/{id}', [FieldsController::class, 'edit'], [AuthMiddleware::class]);
+$router->post('/fields/update/{id}', [FieldsController::class, 'update'], [AuthMiddleware::class]);
+$router->post('/fields/delete/{id}', [FieldsController::class, 'delete'], [AuthMiddleware::class]);
+
+// Admin-Routen ergänzen
+$router->get('/admin/farms', [AdminFarmsController::class, 'index'], [AdminMiddleware::class]);
+$router->get('/admin/farms/create', [AdminFarmsController::class, 'create'], [AdminMiddleware::class]);
+$router->post('/admin/farms/store', [AdminFarmsController::class, 'store'], [AdminMiddleware::class]);
+$router->get('/admin/farms/edit/{id}', [AdminFarmsController::class, 'edit'], [AdminMiddleware::class]);
+$router->post('/admin/farms/update/{id}', [AdminFarmsController::class, 'update'], [AdminMiddleware::class]);
+$router->post('/admin/farms/delete/{id}', [AdminFarmsController::class, 'delete'], [AdminMiddleware::class]);
+
 
 // Admin
 $router->get('/admin', [DashboardController::class, 'index'], [AdminMiddleware::class]);

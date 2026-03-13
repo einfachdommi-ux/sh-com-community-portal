@@ -8,8 +8,8 @@ class AuthMiddleware
     public static function handle(): void
     {
         if (!Auth::check()) {
-            flash('error', 'Bitte logge dich ein.');
-            redirect('/login');
+            header('Location: /login');
+            exit;
         }
     }
 }

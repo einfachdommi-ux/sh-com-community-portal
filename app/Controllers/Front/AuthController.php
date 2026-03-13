@@ -23,7 +23,7 @@ class AuthController extends Controller
 
             if (Auth::attempt($email, $password)) {
                 Logger::audit('auth', 'login');
-                redirect('/admin');
+                redirect('/');
             }
 
             flash('error', 'Login fehlgeschlagen oder Account nicht verifiziert.');
@@ -68,9 +68,9 @@ class AuthController extends Controller
                 'is_active' => 1,
             ]);
 
-            $communityRole = \App\Core\Database::query('SELECT id FROM roles WHERE slug = "community-member" LIMIT 1')->fetch();
-            if ($communityRole) {
-                $userModel->assignRole($userId, (int)$communityRole['id']);
+            $guestRole = \App\Core\Database::query('SELECT id FROM roles WHERE slug = "gast" LIMIT 1')->fetch();
+            if ($guestRole) {
+            $userModel->assignRole($userId, (int)$guestRole['id']);
             }
 
             $verifyUrl = base_url('/verify-email/' . $token);
@@ -80,9 +80,9 @@ class AuthController extends Controller
             $html = ob_get_clean();
             $mailer = new Mailer();
             try {
-                $mailer->send($email, 'Bitte bestätige deine Registrierung bei SH-COM', $html, $userId, 'verification');
+                $mailer->send($email, 'Bitte bestätige deine Registrierung bei der Schleswig-Holstein Community', $html, $userId, 'verification');
             } catch (\Throwable $e) {
-                Logger::mail($userId, 'verification', $email, 'Bitte bestätige deine Registrierung bei SH-COM', 'failed', null, $e->getMessage());
+                Logger::mail($userId, 'verification', $email, 'Bitte bestätige deine Registrierung bei der Schleswig-Holstein Community', 'failed', null, $e->getMessage());
             }
 
             unset($_SESSION['_old']);

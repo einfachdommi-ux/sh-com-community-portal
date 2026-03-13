@@ -8,11 +8,13 @@ class AdminMiddleware
     public static function handle(): void
     {
         if (!Auth::check()) {
-            redirect('/login');
+            header('Location: /login');
+            exit;
         }
-        if (!Auth::hasPermission('dashboard.view')) {
+
+        if (!Auth::hasRole('projektleitung')) {
             http_response_code(403);
-            exit('403 - Zugriff verweigert');
+            exit('Keine Berechtigung.');
         }
     }
 }
