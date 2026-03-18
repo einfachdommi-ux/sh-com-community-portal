@@ -8,7 +8,7 @@
           <?php foreach ($members as $member): ?>
           <tr>
             <td><?= e($member['username']) ?></td>
-            <td><?= e($member['role_name'] ?? '—') ?></td>
+            <td><?= htmlspecialchars($member['role_names'] ?? $member['role_name'] ?? 'Gast') ?></td>
           </tr>
           <?php endforeach; ?>
         </tbody>

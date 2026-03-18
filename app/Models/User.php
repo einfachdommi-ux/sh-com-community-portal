@@ -42,8 +42,22 @@ class User
         $stmt = Database::query("
             SELECT 
                 u.*,
-                GROUP_CONCAT(r.name ORDER BY r.name SEPARATOR ', ') AS role_names,
-                GROUP_CONCAT(r.slug ORDER BY r.slug SEPARATOR ', ') AS role_slugs
+                COALESCE(
+                    GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', '),
+                    'Gast'
+                ) AS role_name,
+                COALESCE(
+                    GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', '),
+                    'gast'
+                ) AS role_slug,
+                COALESCE(
+                    GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', '),
+                    'Gast'
+                ) AS role_names,
+                COALESCE(
+                    GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', '),
+                    'gast'
+                ) AS role_slugs
             FROM users u
             LEFT JOIN user_roles ur ON ur.user_id = u.id
             LEFT JOIN roles r ON r.id = ur.role_id

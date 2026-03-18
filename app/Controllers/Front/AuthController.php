@@ -47,9 +47,9 @@ class AuthController extends Controller
             $password = (string)$this->input('password');
             $passwordConfirm = (string)$this->input('password_confirmation');
 
-            if ($username === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 8 || $password !== $passwordConfirm) {
-                flash('error', 'Bitte prüfe deine Eingaben.');
-                redirect('/register');
+            $guestRole = \App\Core\Database::query('SELECT id FROM roles WHERE slug = "gast" LIMIT 1')->fetch();
+            if ($guestRole) {
+                $userModel->assignRole($userId, (int)$guestRole['id']);
             }
 
             $userModel = new User();
