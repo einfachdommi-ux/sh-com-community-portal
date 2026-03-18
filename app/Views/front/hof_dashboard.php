@@ -23,7 +23,6 @@
                                     <tr>
                                         <th>Feld</th>
                                         <th>Aktuelle Feldfrucht</th>
-                                        <th>Geplante Feldfrucht</th>
                                         <th>Arbeit</th>
                                     </tr>
                                 </thead>
@@ -32,7 +31,6 @@
                                     <tr>
                                         <td><?= htmlspecialchars($field['field_name'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($field['current_crop'] ?? '') ?></td>
-                                        <td><?= htmlspecialchars($field['planned_crop'] ?? '') ?></td>
                                         <td><?= htmlspecialchars($field['pending_work'] ?? '') ?></td>
                                     </tr>
                                 <?php endforeach; ?>

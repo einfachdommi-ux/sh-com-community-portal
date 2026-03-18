@@ -20,6 +20,8 @@
                 <div class="card-header"><strong>Einstellungen</strong></div>
                 <div class="card-body">
                     <form method="post" action="/profile/update" enctype="multipart/form-data" class="row g-3">
+                        <input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['_csrf'] ?? '') ?>">
+
                         <div class="col-md-4 text-center">
                             <img
                                 src="<?= htmlspecialchars($user['avatar'] ?: '/assets/img/default-avatar.png') ?>"
@@ -67,12 +69,14 @@
                                     <textarea name="bio" class="form-control" rows="5"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
                                 </div>
                                 <div class="col-md-6">
+                                    <input type="hidden" name="is_public_profile" value="0">
                                     <div class="form-check mt-2">
                                         <input class="form-check-input" type="checkbox" value="1" id="is_public_profile" name="is_public_profile" <?= !empty($user['is_public_profile']) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="is_public_profile">Öffentliches Profil aktivieren</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                    <input type="hidden" name="show_email_public" value="0">
                                     <div class="form-check mt-2">
                                         <input class="form-check-input" type="checkbox" value="1" id="show_email_public" name="show_email_public" <?= !empty($user['show_email_public']) ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="show_email_public">E-Mail öffentlich anzeigen</label>
@@ -92,6 +96,8 @@
                 <div class="card-header"><strong>Sicherheitsoptionen</strong></div>
                 <div class="card-body">
                     <form method="post" action="/profile/security" class="row g-3">
+                        <input type="hidden" name="_csrf" value="<?= htmlspecialchars($_SESSION['_csrf'] ?? '') ?>">
+
                         <div class="col-md-4">
                             <label class="form-label">Aktuelles Passwort</label>
                             <input type="password" name="current_password" class="form-control" required>

@@ -105,7 +105,7 @@ function fieldStatusClass(array $field): string
                         <td><?= htmlspecialchars($field['planned_sowing_date'] ?? '') ?></td>
                         <td><?= htmlspecialchars($field['pending_work'] ?? '') ?></td>
                         <td><?= htmlspecialchars($field['yield_bonus'] ?? '') ?></td>
-                        <td><?= htmlspecialchars((string)($field['farm_id'] ?? '')) ?></td>
+                        <td><?= htmlspecialchars((string)($field['farm_name'] ?? '')) ?></td>
                         <td>
                             <a href="/fields/edit/<?= (int)$field['id'] ?>" class="btn btn-sm btn-warning">Bearbeiten</a>
                             <form method="post" action="/fields/delete/<?= (int)$field['id'] ?>" class="d-inline" onsubmit="return confirm('Feld wirklich löschen?');">

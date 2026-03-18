@@ -1,9 +1,25 @@
-SH-COM Portal v1.3 – Änderungen für app/Views/layouts/frontend.php
+PATCH-HINWEISE für app/Views/layouts/frontend.php
 
-Ergänze im eingeloggten User-Menü oder in der Navbar einen Link zum Profil:
+1) Navigation Links weiß machen:
+- Entferne style="font-color:fff;"
+- Setze bei Parent-Dropdowns:
+  class="nav-link dropdown-toggle text-white"
+- Setze bei normalen Links:
+  class="nav-link text-white"
 
-<a href="/profile">Profil</a>
+2) Footer-Version:
+Build: 1.6 Stable
 
-Falls du bereits ein Dropdown für eingeloggte User hast, füge dort ein:
-
-<a class="dropdown-item" href="/profile">Mein Profil</a>
+3) Falls gewünscht, ergänze in app.css:
+.sh-navbar .navbar-nav .nav-link { color:#fff !important; }
+.sh-navbar .navbar-nav .nav-link:hover,
+.sh-navbar .navbar-nav .nav-link:focus,
+.sh-navbar .navbar-nav .nav-link.active { color:#fff !important; opacity:.85; }
+.sh-navbar .navbar-brand,
+.sh-navbar .navbar-brand span { color:#fff !important; }
+.sh-navbar .dropdown-menu { background:#fff; }
+.sh-navbar .dropdown-item { color:#212529; }
+.sh-navbar .dropdown-item:hover,
+.sh-navbar .dropdown-item:focus { background:#f8f9fa; color:#212529; }
+.sh-navbar .navbar-toggler { color:#fff; }
+.sh-navbar .navbar-toggler-icon { filter:invert(1); }

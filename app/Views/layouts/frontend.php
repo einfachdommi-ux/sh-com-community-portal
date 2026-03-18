@@ -91,7 +91,7 @@ $user = Auth::user();
 <footer class="py-5 mt-5 sh-footer text-white">
   <div class="container d-flex flex-column flex-lg-row justify-content-between gap-3">
     <div><small><a class="text-decoration-none text-white" href="/page/imprint">Impressum</a>  |  <a class="text-decoration-none text-white" href="/page/datenschutz">Datenschutz</a></small></div>
-    <div><small>Build: 1.5.2 Beta | Copyright &copy; <?= date('Y') ?> <a class="text-decoration-none text-white" href="https://www.sh-com.de">Schleswig-Holstein Community</a></small></div>
+    <div><small>Build: 1.6.0 Beta | Copyright &copy; <?= date('Y') ?> <a class="text-decoration-none text-white" href="https://www.sh-com.de">Schleswig-Holstein Community</a></small></div>
   </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

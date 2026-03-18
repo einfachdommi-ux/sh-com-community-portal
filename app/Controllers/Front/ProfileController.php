@@ -1,86 +1,83 @@
 <?php
 namespace App\Controllers\Front;
 
+use App\Core\Auth;
 use App\Core\Controller;
 use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function index(): void
+    protected function requireLogin(): array
     {
-        if (empty($_SESSION['user']['id'])) {
+        if (!Auth::check()) {
             header('Location: /login');
             exit;
         }
-
-        $userModel = new User();
-        $user = $userModel->find((int)$_SESSION['user']['id']);
-
+        $user = Auth::user();
         if (!$user) {
-            http_response_code(404);
-            exit('Benutzer nicht gefunden.');
+            header('Location: /login');
+            exit;
         }
-
-        $this->view('front/profile', [
-            'user' => $user,
-        ], 'frontend');
+        return $user;
     }
 
-    public function public(string $username): void
+    public function index(): void
     {
-        $userModel = new User();
-        $user = $userModel->findPublicByUsername($username);
-
-        if (!$user) {
-            http_response_code(404);
-            exit('Profil nicht gefunden.');
-        }
-
-        $this->view('front/public-profile', [
-            'user' => $user,
-        ], 'frontend');
+        $user = $this->requireLogin();
+        $this->view('front/profile', ['user' => $user], 'frontend');
     }
 
     public function update(): void
     {
         $this->requirePost();
+        $user = $this->requireLogin();
 
-        if (empty($_SESSION['user']['id'])) {
-            header('Location: /login');
+        if (!hash_equals($_SESSION['_csrf'] ?? '', $_POST['_csrf'] ?? '')) {
+            $_SESSION['flash_error'] = 'Ungültiges CSRF-Token.';
+            header('Location: /profile');
             exit;
         }
 
-        $userId = (int)$_SESSION['user']['id'];
-        $userModel = new User();
-        $currentUser = $userModel->find($userId);
+        $avatarPath = $user['avatar'] ?? null;
 
-        if (!$currentUser) {
-            http_response_code(404);
-            exit('Benutzer nicht gefunden.');
+        if (isset($_FILES['avatar_file']) && is_array($_FILES['avatar_file']) && ($_FILES['avatar_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            if (($_FILES['avatar_file']['error'] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+                $tmpPath = $_FILES['avatar_file']['tmp_name'] ?? '';
+                $originalName = $_FILES['avatar_file']['name'] ?? '';
+                $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+                $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
+                if (in_array($ext, $allowed, true)) {
+                    $uploadDir = BASE_PATH . '/public/assets/uploads/avatars';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0775, true);
+                    }
+
+                    $fileName = 'avatar_' . (int)$user['id'] . '_' . time() . '.' . $ext;
+                    $targetPath = $uploadDir . '/' . $fileName;
+
+                    if (move_uploaded_file($tmpPath, $targetPath)) {
+                        $avatarPath = '/assets/uploads/avatars/' . $fileName;
+                    }
+                }
+            }
         }
 
-        $avatarPath = $currentUser['avatar'] ?? '';
-        $uploadedAvatar = $this->handleAvatarUpload();
-        if ($uploadedAvatar !== '') {
-            $avatarPath = $uploadedAvatar;
-        }
-
-        $isPublicProfile = $this->input('is_public_profile', 0) ? 1 : 0;
-        $showEmail = $this->input('show_email_public', 0) ? 1 : 0;
-
-        $userModel->updateProfile($userId, [
+        $data = [
             'first_name' => trim((string)$this->input('first_name', '')),
             'last_name' => trim((string)$this->input('last_name', '')),
             'username' => trim((string)$this->input('username', '')),
             'email' => trim((string)$this->input('email', '')),
             'bio' => trim((string)$this->input('bio', '')),
             'discord' => trim((string)$this->input('discord', '')),
-            'avatar' => $avatarPath,
             'website' => trim((string)$this->input('website', '')),
             'location' => trim((string)$this->input('location', '')),
-            'is_public_profile' => $isPublicProfile,
-            'show_email_public' => $showEmail,
-        ]);
+            'avatar' => $avatarPath,
+            'is_public_profile' => (int)$this->input('is_public_profile', 0),
+            'show_email_public' => (int)$this->input('show_email_public', 0),
+        ];
+
+        (new User())->updateProfile((int)$user['id'], $data);
 
         $_SESSION['flash_success'] = 'Profil erfolgreich aktualisiert.';
         header('Location: /profile');
@@ -90,81 +87,48 @@ class ProfileController extends Controller
     public function security(): void
     {
         $this->requirePost();
+        $user = $this->requireLogin();
 
-        if (empty($_SESSION['user']['id'])) {
-            header('Location: /login');
-            exit;
-        }
-
-        $userId = (int)$_SESSION['user']['id'];
-        $currentPassword = (string)$this->input('current_password', '');
-        $newPassword = (string)$this->input('new_password', '');
-        $confirmPassword = (string)$this->input('confirm_password', '');
-
-        if ($newPassword === '' || strlen($newPassword) < 8) {
-            $_SESSION['flash_error'] = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.';
+        if (!hash_equals($_SESSION['_csrf'] ?? '', $_POST['_csrf'] ?? '')) {
+            $_SESSION['flash_error'] = 'Ungültiges CSRF-Token.';
             header('Location: /profile');
             exit;
         }
 
-        if ($newPassword !== $confirmPassword) {
+        $currentPassword = (string)$this->input('current_password', '');
+        $newPassword = (string)$this->input('new_password', '');
+        $confirmPassword = (string)$this->input('confirm_password', '');
+
+        if ($newPassword === '' || $newPassword !== $confirmPassword) {
             $_SESSION['flash_error'] = 'Die neuen Passwörter stimmen nicht überein.';
             header('Location: /profile');
             exit;
         }
 
-        $userModel = new User();
-        $user = $userModel->find($userId);
-
-        if (!$user || !password_verify($currentPassword, $user['password_hash'])) {
+        $freshUser = (new User())->find((int)$user['id']);
+        if (!$freshUser || !password_verify($currentPassword, $freshUser['password_hash'])) {
             $_SESSION['flash_error'] = 'Das aktuelle Passwort ist falsch.';
             header('Location: /profile');
             exit;
         }
 
-        $userModel->updatePassword($userId, password_hash($newPassword, PASSWORD_DEFAULT));
+        (new User())->updatePassword((int)$user['id'], password_hash($newPassword, PASSWORD_DEFAULT));
 
-        $_SESSION['flash_success'] = 'Sicherheitseinstellungen gespeichert. Das Passwort wurde aktualisiert.';
+        $_SESSION['flash_success'] = 'Passwort erfolgreich geändert.';
         header('Location: /profile');
         exit;
     }
 
-    private function handleAvatarUpload(): string
+    public function public(string $username): void
     {
-        if (!isset($_FILES['avatar_file']) || !is_array($_FILES['avatar_file'])) {
-            return '';
+        $profileUser = (new User())->findByUsername($username);
+
+        if (!$profileUser) {
+            http_response_code(404);
+            echo 'Profil nicht gefunden.';
+            return;
         }
 
-        $file = $_FILES['avatar_file'];
-        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            return '';
-        }
-
-        if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-            return '';
-        }
-
-        $tmpPath = $file['tmp_name'] ?? '';
-        $originalName = $file['name'] ?? '';
-        $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (!in_array($ext, $allowed, true)) {
-            return '';
-        }
-
-        $uploadDir = BASE_PATH . '/public/assets/uploads/avatars';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0775, true);
-        }
-
-        $fileName = 'avatar_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-        $target = $uploadDir . '/' . $fileName;
-
-        if (!move_uploaded_file($tmpPath, $target)) {
-            return '';
-        }
-
-        return '/assets/uploads/avatars/' . $fileName;
+        $this->view('front/profile_public', ['profileUser' => $profileUser], 'frontend');
     }
 }

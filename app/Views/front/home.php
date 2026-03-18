@@ -3,8 +3,8 @@
     <div class="row align-items-center g-4">
       <div class="col-lg-7">
         <span class="badge rounded-pill text-bg-danger mb-3">Schleswig-Holstein Community</span>
-        <h1 class="display-5 fw-bold">Modernes Community-Portal für Gaming, News und Teammanagement.</h1>
-        <p class="lead opacity-75">Responsive, controller-basiert und für eure Community-Organisation optimiert.</p>
+        <h1 class="display-5 fw-bold">eure Multigaming Community aus dem Norden Deutschlands</h1>
+        <p class="lead opacity-75">Egal ob Shooter, Simulatoren oder Koop Action. Hier seid ihr genau richtig!</p>
         <div class="d-flex gap-2 flex-wrap">
           <a class="btn btn-danger btn-lg" href="<?= e(base_url('/register')) ?>">Community beitreten</a>
           <a class="btn btn-outline-light btn-lg" href="<?= e(base_url('/news')) ?>">Neueste News</a>
