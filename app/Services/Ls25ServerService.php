@@ -13,10 +13,10 @@ class Ls25ServerService
     public function getStatus(): array
     {
         $url = $this->config['endpoint'] ?? '';
-        $timeout = (int)($this->config['timeout'] ?? 3);
+        $timeout = (int)($this->config['timeout'] ?? 5);
 
         if ($url === '') {
-            return $this->offline();
+            return $this->offline('Kein Endpoint konfiguriert');
         }
 
         try {
@@ -26,33 +26,117 @@ class Ls25ServerService
                 ]
             ]);
 
-            $response = @file_get_contents($url, false, $context);
+            $xmlString = @file_get_contents($url, false, $context);
 
-            if ($response === false || $response === '') {
-                return $this->offline();
+            if ($xmlString === false || trim($xmlString) === '') {
+                return $this->offline('Feed nicht erreichbar');
             }
 
-            $data = json_decode($response, true);
+            libxml_use_internal_errors(true);
+            $xml = simplexml_load_string($xmlString);
 
-            if (!is_array($data)) {
-                return $this->offline();
+            if ($xml === false) {
+                return $this->offline('Ungültiges XML');
             }
 
-            return [
-                'online' => true,
-                'name' => $data['serverName'] ?? ($data['name'] ?? 'LS25 Server'),
-                'map' => $data['mapName'] ?? ($data['map'] ?? '-'),
-                'players' => (int)($data['players'] ?? 0),
-                'maxPlayers' => (int)($data['maxPlayers'] ?? 0),
-                'hasPassword' => !empty($data['hasPassword']),
-                'mods' => !empty($data['mods']),
-            ];
+            return $this->mapXmlToStatus($xml);
         } catch (\Throwable $e) {
-            return $this->offline();
+            return $this->offline($e->getMessage());
         }
     }
 
-    protected function offline(): array
+    protected function mapXmlToStatus(\SimpleXMLElement $xml): array
+    {
+        $serverName = $this->firstValue($xml, [
+            'serverName',
+            'gameserver/name',
+            'game/name',
+            'name',
+        ], 'LS25 Server');
+
+        $mapName = $this->firstValue($xml, [
+            'mapName',
+            'gameserver/mapName',
+            'game/mapName',
+            'map',
+        ], '-');
+
+        $players = (int)$this->firstValue($xml, [
+            'players',
+            'gameserver/players',
+            'game/players',
+            'numPlayers',
+        ], 0);
+
+        $maxPlayers = (int)$this->firstValue($xml, [
+            'maxPlayers',
+            'gameserver/maxPlayers',
+            'game/maxPlayers',
+            'slots',
+        ], 0);
+
+        $hasPasswordRaw = $this->firstValue($xml, [
+            'hasPassword',
+            'gameserver/hasPassword',
+            'game/hasPassword',
+            'password',
+        ], 'false');
+
+        $modsRaw = $this->firstValue($xml, [
+            'mods',
+            'gameserver/mods',
+            'game/mods',
+            'modCount',
+        ], 'false');
+
+        return [
+            'online' => true,
+            'name' => (string)$serverName,
+            'map' => (string)$mapName,
+            'players' => $players,
+            'maxPlayers' => $maxPlayers,
+            'hasPassword' => $this->toBool($hasPasswordRaw),
+            'mods' => $this->toBool($modsRaw),
+            'raw' => $xml->asXML(),
+            'error' => null,
+        ];
+    }
+
+    protected function firstValue(\SimpleXMLElement $xml, array $paths, mixed $default = null): mixed
+    {
+        foreach ($paths as $path) {
+            $parts = explode('/', $path);
+            $node = $xml;
+            $found = true;
+
+            foreach ($parts as $part) {
+                if (!isset($node->{$part})) {
+                    $found = false;
+                    break;
+                }
+                $node = $node->{$part};
+            }
+
+            if ($found) {
+                $value = trim((string)$node);
+                if ($value !== '') {
+                    return $value;
+                }
+            }
+        }
+
+        return $default;
+    }
+
+    protected function toBool(mixed $value): bool
+    {
+        $value = strtolower(trim((string)$value));
+
+        return in_array($value, ['1', 'true', 'yes', 'ja', 'on'], true)
+            || (is_numeric($value) && (int)$value > 0);
+    }
+
+    protected function offline(?string $reason = null): array
     {
         return [
             'online' => false,
@@ -62,6 +146,8 @@ class Ls25ServerService
             'maxPlayers' => 0,
             'hasPassword' => false,
             'mods' => false,
+            'raw' => null,
+            'error' => $reason,
         ];
     }
 }

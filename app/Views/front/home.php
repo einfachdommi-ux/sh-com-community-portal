@@ -26,7 +26,14 @@
   </div>
 </section>
 
-<?php include APP_PATH . '/Views/partials/ls25_widget.php'; ?>
+<section class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4"><h2 class="h3 mb-0">LS 25 Server Status</div>
+  <div class="row g-4">
+    <?php include APP_PATH . '/Views/partials/ls25_widget.php'; ?>
+  </div>
+</section>
+
+
 <section class="container pb-5">
   <div class="row g-4">
     <div class="col-lg-6">
