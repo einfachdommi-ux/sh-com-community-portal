@@ -52,14 +52,14 @@ class Ls25ServerService
             'gameserver/name',
             'game/name',
             'name',
-        ], 'LS25 Server');
+        ], '[#HC] FS 25 Mod Server');
 
         $mapName = $this->firstValue($xml, [
             'mapName',
             'gameserver/mapName',
             'game/mapName',
             'map',
-        ], '-');
+        ], 'Deutschhes-Eck 4Fach Multi');
 
         $players = (int)$this->firstValue($xml, [
             'players',
@@ -73,21 +73,21 @@ class Ls25ServerService
             'gameserver/maxPlayers',
             'game/maxPlayers',
             'slots',
-        ], 0);
+        ], '16');
 
         $hasPasswordRaw = $this->firstValue($xml, [
             'hasPassword',
             'gameserver/hasPassword',
             'game/hasPassword',
             'password',
-        ], 'false');
+        ], 'Ja');
 
         $modsRaw = $this->firstValue($xml, [
             'mods',
             'gameserver/mods',
             'game/mods',
             'modCount',
-        ], 'false');
+        ], '218');
 
         return [
             'online' => true,
@@ -107,8 +107,8 @@ class Ls25ServerService
         foreach ($paths as $path) {
             $parts = explode('/', $path);
             $node = $xml;
-            $found = true;
 
+            $found = true;
             foreach ($parts as $part) {
                 if (!isset($node->{$part})) {
                     $found = false;
