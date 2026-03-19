@@ -7,7 +7,7 @@
         </span>
     </div>
     <div class="card-body">
-        <p class="mb-2"><strong>Name:</strong> <span id="ls25-name"><?= htmlspecialchars($ls25['name'] ?? 'LS25 Server') ?></span></p>
+        <p class="mb-2"><strong>Name:</strong> <span id="ls25-name">[#HC] FS 25 Mod Server</span></p>
         <p class="mb-2"><strong>Map:</strong> <span id="ls25-map"><?= htmlspecialchars($ls25['map'] ?? 'Deutsches-Eck 4Fach Multi') ?></span></p>
         <p class="mb-2"><strong>Spieler:</strong> <span id="ls25-players"><?= (int)($ls25['players'] ?? 0) ?></span> / <span id="ls25-maxPlayers"><?= (int)($ls25['maxPlayers'] ?? 0) ?></span></p>
         <p class="mb-2"><strong>Passwort:</strong> <span id="ls25-password"><?= !empty($ls25['hasPassword']) ? 'Ja' : 'Ja' ?></span></p>

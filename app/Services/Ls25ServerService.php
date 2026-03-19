@@ -48,61 +48,57 @@ class Ls25ServerService
     protected function mapXmlToStatus(\SimpleXMLElement $xml): array
     {
         $serverName = $this->value($xml, [
+            'Server/serverName',
+            'Server/@name',
             '@serverName',
             'serverName',
-            'gameserver/@serverName',
-            'gameserver/name',
-            'game/@serverName',
-            'game/name',
             '@name',
             'name',
         ], 'LS25 Server');
 
         $mapName = $this->value($xml, [
+            'Server/mapName',
+            'Server/map',
             '@mapName',
             'mapName',
-            'gameserver/@mapName',
-            'gameserver/mapName',
-            'game/@mapName',
-            'game/mapName',
             'map',
         ], '-');
 
         $players = (int)$this->value($xml, [
+            'Slots/@numUsed',
+            'Slots/numUsed',
+            'slots/@numUsed',
+            'slots/numUsed',
             '@numUsed',
             'numUsed',
-            'gameserver/@numUsed',
-            'gameserver/numUsed',
-            'game/@numUsed',
-            'game/numUsed',
-            '@players',
             'players',
             'numPlayers',
         ], 0);
 
         $maxPlayers = (int)$this->value($xml, [
+            'Slots/@capacity',
+            'Slots/capacity',
+            'slots/@capacity',
+            'slots/capacity',
             '@capacity',
             'capacity',
-            'gameserver/@capacity',
-            'gameserver/capacity',
-            'game/@capacity',
-            'game/capacity',
-            '@maxPlayers',
             'maxPlayers',
             'slots',
-        ], '-');
+        ], 0);
 
         $hasPasswordRaw = $this->value($xml, [
+            'Server/@hasPassword',
+            'Server/hasPassword',
             '@hasPassword',
             'hasPassword',
-            '@password',
             'password',
         ], 'Ja');
 
         $modsRaw = $this->value($xml, [
+            'Mods/@mods',
+            'Mods/mods',
             '@mods',
             'mods',
-            '@modCount',
             'modCount',
         ], '218');
 
@@ -122,9 +118,9 @@ class Ls25ServerService
     protected function value(\SimpleXMLElement $xml, array $paths, mixed $default = null): mixed
     {
         foreach ($paths as $path) {
-            $found = $this->readPath($xml, $path);
-            if ($found !== null && $found !== '') {
-                return $found;
+            $value = $this->readPath($xml, $path);
+            if ($value !== null && $value !== '') {
+                return $value;
             }
         }
 
@@ -141,7 +137,7 @@ class Ls25ServerService
                 continue;
             }
 
-            if ($part[0] === '@') {
+            if (str_starts_with($part, '@')) {
                 $attrName = substr($part, 1);
                 $attrs = $node->attributes();
 

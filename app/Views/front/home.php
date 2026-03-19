@@ -26,13 +26,6 @@
   </div>
 </section>
 
-<section class="container py-5">
-  <div class="d-flex justify-content-between align-items-center mb-4"><h2 class="h3 mb-0">LS 25 Server Status</div>
-  <div class="row g-4">
-    <?php include APP_PATH . '/Views/partials/ls25_widget.php'; ?>
-  </div>
-</section>
-
 
 <section class="container pb-5">
   <div class="row g-4">
@@ -48,13 +41,9 @@
       </div></div>
     </div>
     <div class="col-lg-6">
-      <h2 class="h3 mb-3">Team</h2>
+      <h2 class="h3 mb-3">LS 25 Server Status</h2>
       <div class="row g-3">
-        <?php foreach ($team as $member): ?>
-        <div class="col-sm-6">
-          <div class="card sh-card h-100"><div class="card-body"><h3 class="h5"><?= e($member['display_name']) ?></h3><div class="text-danger fw-semibold mb-2"><?= e($member['team_role']) ?></div><p class="small mb-0"><?= e($member['bio']) ?></p></div></div>
-        </div>
-        <?php endforeach; ?>
+        <?php include APP_PATH . '/Views/partials/ls25_widget.php'; ?>
       </div>
     </div>
   </div>

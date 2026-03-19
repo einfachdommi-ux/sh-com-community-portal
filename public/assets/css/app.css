@@ -23,3 +23,8 @@ body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 .btn-danger:hover{background:#b91c1c;border-color:#b91c1c}
 .form-control,.form-select{border-radius:.9rem;padding:.8rem 1rem}
 .card-body h1,.card-body h2,.card-body h3{color:var(--sh-blue)}
+
+#div-bg-ls25 {
+background-image: url('assets/img/banner_shc.png');
+opacity: 0.2;
+}
