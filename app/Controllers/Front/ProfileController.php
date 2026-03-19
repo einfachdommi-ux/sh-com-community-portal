@@ -13,11 +13,13 @@ class ProfileController extends Controller
             header('Location: /login');
             exit;
         }
+
         $user = Auth::user();
         if (!$user) {
             header('Location: /login');
             exit;
         }
+
         return $user;
     }
 
@@ -72,6 +74,15 @@ class ProfileController extends Controller
             'discord' => trim((string)$this->input('discord', '')),
             'website' => trim((string)$this->input('website', '')),
             'location' => trim((string)$this->input('location', '')),
+            'instagram' => trim((string)$this->input('instagram', '')),
+            'facebook' => trim((string)$this->input('facebook', '')),
+            'snapchat' => trim((string)$this->input('snapchat', '')),
+            'x_profile' => trim((string)$this->input('x_profile', '')),
+            'epic_games' => trim((string)$this->input('epic_games', '')),
+            'steam' => trim((string)$this->input('steam', '')),
+            'ea_app' => trim((string)$this->input('ea_app', '')),
+            'twitch' => trim((string)$this->input('twitch', '')),
+            'youtube' => trim((string)$this->input('youtube', '')),
             'avatar' => $avatarPath,
             'is_public_profile' => (int)$this->input('is_public_profile', 0),
             'show_email_public' => (int)$this->input('show_email_public', 0),
@@ -121,7 +132,7 @@ class ProfileController extends Controller
 
     public function public(string $username): void
     {
-        $profileUser = (new User())->findByUsername($username);
+        $profileUser = (new User())->findPublicProfileByUsername($username);
 
         if (!$profileUser) {
             http_response_code(404);

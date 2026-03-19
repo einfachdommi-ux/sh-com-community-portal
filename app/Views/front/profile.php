@@ -68,6 +68,44 @@
                                     <label class="form-label">Bio</label>
                                     <textarea name="bio" class="form-control" rows="5"><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Instagram</label>
+                                    <input type="url" name="instagram" class="form-control" value="<?= htmlspecialchars($user['instagram'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Facebook</label>
+                                    <input type="url" name="facebook" class="form-control" value="<?= htmlspecialchars($user['facebook'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Snapchat</label>
+                                    <input type="text" name="snapchat" class="form-control" value="<?= htmlspecialchars($user['snapchat'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">X / Twitter</label>
+                                    <input type="url" name="x_profile" class="form-control" value="<?= htmlspecialchars($user['x_profile'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">EPIC Games</label>
+                                    <input type="text" name="epic_games" class="form-control" value="<?= htmlspecialchars($user['epic_games'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Steam</label>
+                                    <input type="text" name="steam" class="form-control" value="<?= htmlspecialchars($user['steam'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">EA App</label>
+                                    <input type="text" name="ea_app" class="form-control" value="<?= htmlspecialchars($user['ea_app'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Twitch</label>
+                                    <input type="url" name="twitch" class="form-control" value="<?= htmlspecialchars($user['twitch'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">YouTube</label>
+                                    <input type="url" name="youtube" class="form-control" value="<?= htmlspecialchars($user['youtube'] ?? '') ?>">
+                                </div>
+
                                 <div class="col-md-6">
                                     <input type="hidden" name="is_public_profile" value="0">
                                     <div class="form-check mt-2">

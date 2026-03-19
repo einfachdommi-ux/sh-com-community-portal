@@ -24,6 +24,24 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
+    public function findPublicProfileByUsername(string $username): ?array
+    {
+        $stmt = Database::query("
+            SELECT 
+                u.*,
+                GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', ') AS role_names,
+                GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', ') AS role_slugs
+            FROM users u
+            LEFT JOIN user_roles ur ON ur.user_id = u.id
+            LEFT JOIN roles r ON r.id = ur.role_id
+            WHERE u.username = :username
+            GROUP BY u.id
+            LIMIT 1
+        ", ['username' => $username]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
     public function countAll(): int
     {
         $stmt = Database::query("SELECT COUNT(*) AS total FROM users");
@@ -42,22 +60,10 @@ class User
         $stmt = Database::query("
             SELECT 
                 u.*,
-                COALESCE(
-                    GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', '),
-                    'Gast'
-                ) AS role_name,
-                COALESCE(
-                    GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', '),
-                    'gast'
-                ) AS role_slug,
-                COALESCE(
-                    GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', '),
-                    'Gast'
-                ) AS role_names,
-                COALESCE(
-                    GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', '),
-                    'gast'
-                ) AS role_slugs
+                COALESCE(GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', '), 'Gast') AS role_name,
+                COALESCE(GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', '), 'gast') AS role_slug,
+                COALESCE(GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', '), 'Gast') AS role_names,
+                COALESCE(GROUP_CONCAT(DISTINCT r.slug ORDER BY r.slug SEPARATOR ', '), 'gast') AS role_slugs
             FROM users u
             LEFT JOIN user_roles ur ON ur.user_id = u.id
             LEFT JOIN roles r ON r.id = ur.role_id
@@ -71,9 +77,9 @@ class User
     {
         Database::query("
             INSERT INTO users
-            (username,email,password_hash,first_name,last_name,avatar,bio,discord,website,location,is_public_profile,show_email_public,email_verification_token,is_verified,is_active,created_at,updated_at)
+            (username,email,password_hash,first_name,last_name,avatar,bio,discord,website,location,instagram,facebook,snapchat,x_profile,epic_games,steam,ea_app,twitch,youtube,is_public_profile,show_email_public,email_verification_token,is_verified,is_active,created_at,updated_at)
             VALUES
-            (:username,:email,:password_hash,:first_name,:last_name,:avatar,:bio,:discord,:website,:location,:is_public_profile,:show_email_public,:token,:verified,:active,NOW(),NOW())
+            (:username,:email,:password_hash,:first_name,:last_name,:avatar,:bio,:discord,:website,:location,:instagram,:facebook,:snapchat,:x_profile,:epic_games,:steam,:ea_app,:twitch,:youtube,:is_public_profile,:show_email_public,:token,:verified,:active,NOW(),NOW())
         ", [
             'username' => $data['username'] ?? '',
             'email' => $data['email'] ?? '',
@@ -85,6 +91,15 @@ class User
             'discord' => $data['discord'] ?? null,
             'website' => $data['website'] ?? null,
             'location' => $data['location'] ?? null,
+            'instagram' => $data['instagram'] ?? null,
+            'facebook' => $data['facebook'] ?? null,
+            'snapchat' => $data['snapchat'] ?? null,
+            'x_profile' => $data['x_profile'] ?? null,
+            'epic_games' => $data['epic_games'] ?? null,
+            'steam' => $data['steam'] ?? null,
+            'ea_app' => $data['ea_app'] ?? null,
+            'twitch' => $data['twitch'] ?? null,
+            'youtube' => $data['youtube'] ?? null,
             'is_public_profile' => !empty($data['is_public_profile']) ? 1 : 0,
             'show_email_public' => !empty($data['show_email_public']) ? 1 : 0,
             'token' => $data['email_verification_token'] ?? null,
@@ -169,6 +184,15 @@ class User
                 discord = :discord,
                 website = :website,
                 location = :location,
+                instagram = :instagram,
+                facebook = :facebook,
+                snapchat = :snapchat,
+                x_profile = :x_profile,
+                epic_games = :epic_games,
+                steam = :steam,
+                ea_app = :ea_app,
+                twitch = :twitch,
+                youtube = :youtube,
                 avatar = :avatar,
                 is_public_profile = :is_public_profile,
                 show_email_public = :show_email_public,
@@ -184,6 +208,15 @@ class User
             'discord' => $data['discord'] ?? null,
             'website' => $data['website'] ?? null,
             'location' => $data['location'] ?? null,
+            'instagram' => $data['instagram'] ?? null,
+            'facebook' => $data['facebook'] ?? null,
+            'snapchat' => $data['snapchat'] ?? null,
+            'x_profile' => $data['x_profile'] ?? null,
+            'epic_games' => $data['epic_games'] ?? null,
+            'steam' => $data['steam'] ?? null,
+            'ea_app' => $data['ea_app'] ?? null,
+            'twitch' => $data['twitch'] ?? null,
+            'youtube' => $data['youtube'] ?? null,
             'avatar' => $data['avatar'] ?? null,
             'is_public_profile' => !empty($data['is_public_profile']) ? 1 : 0,
             'show_email_public' => !empty($data['show_email_public']) ? 1 : 0

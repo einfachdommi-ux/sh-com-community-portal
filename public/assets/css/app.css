@@ -28,3 +28,13 @@ body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 background-image: url('assets/img/banner_shc.png');
 opacity: 0.2;
 }
+
+.member-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-radius: 1rem;
+}
+
+.member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.08);
+}
