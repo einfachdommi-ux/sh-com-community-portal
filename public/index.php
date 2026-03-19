@@ -44,6 +44,7 @@ use App\Controllers\Front\HofController;
 use App\Controllers\Front\HofDashboardController;
 use App\Controllers\Front\FieldsController;
 use App\Controllers\Admin\AdminFarmsController;
+use App\Controllers\Front\ApiController;
 
 $router = new Router();
 
@@ -65,6 +66,7 @@ $router->get('/profile', [ProfileController::class, 'index'], [AuthMiddleware::c
 $router->post('/profile/update', [ProfileController::class, 'update'], [AuthMiddleware::class]);
 $router->post('/profile/security', [ProfileController::class, 'security'], [AuthMiddleware::class]);
 $router->get('/profile/{username}', [ProfileController::class, 'public']);
+$router->get('/api/ls25-status', [ApiController::class, 'ls25Status']);
 // ===========================
 // LS 25 Portal
 // ===========================

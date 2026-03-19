@@ -26,6 +26,7 @@
   </div>
 </section>
 
+<?php include APP_PATH . '/Views/partials/ls25_widget.php'; ?>
 <section class="container pb-5">
   <div class="row g-4">
     <div class="col-lg-6">
