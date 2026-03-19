@@ -47,45 +47,62 @@ class Ls25ServerService
 
     protected function mapXmlToStatus(\SimpleXMLElement $xml): array
     {
-        $serverName = $this->firstValue($xml, [
+        $serverName = $this->value($xml, [
+            '@serverName',
             'serverName',
+            'gameserver/@serverName',
             'gameserver/name',
+            'game/@serverName',
             'game/name',
+            '@name',
             'name',
-        ], '[#HC] FS 25 Mod Server');
+        ], 'LS25 Server');
 
-        $mapName = $this->firstValue($xml, [
+        $mapName = $this->value($xml, [
+            '@mapName',
             'mapName',
+            'gameserver/@mapName',
             'gameserver/mapName',
+            'game/@mapName',
             'game/mapName',
             'map',
-        ], 'Deutschhes-Eck 4Fach Multi');
+        ], '-');
 
-        $players = (int)$this->firstValue($xml, [
+        $players = (int)$this->value($xml, [
+            '@numUsed',
+            'numUsed',
+            'gameserver/@numUsed',
+            'gameserver/numUsed',
+            'game/@numUsed',
+            'game/numUsed',
+            '@players',
             'players',
-            'gameserver/players',
-            'game/players',
             'numPlayers',
         ], 0);
 
-        $maxPlayers = (int)$this->firstValue($xml, [
+        $maxPlayers = (int)$this->value($xml, [
+            '@capacity',
+            'capacity',
+            'gameserver/@capacity',
+            'gameserver/capacity',
+            'game/@capacity',
+            'game/capacity',
+            '@maxPlayers',
             'maxPlayers',
-            'gameserver/maxPlayers',
-            'game/maxPlayers',
             'slots',
-        ], '16');
+        ], '-');
 
-        $hasPasswordRaw = $this->firstValue($xml, [
+        $hasPasswordRaw = $this->value($xml, [
+            '@hasPassword',
             'hasPassword',
-            'gameserver/hasPassword',
-            'game/hasPassword',
+            '@password',
             'password',
         ], 'Ja');
 
-        $modsRaw = $this->firstValue($xml, [
+        $modsRaw = $this->value($xml, [
+            '@mods',
             'mods',
-            'gameserver/mods',
-            'game/mods',
+            '@modCount',
             'modCount',
         ], '218');
 
@@ -102,30 +119,47 @@ class Ls25ServerService
         ];
     }
 
-    protected function firstValue(\SimpleXMLElement $xml, array $paths, mixed $default = null): mixed
+    protected function value(\SimpleXMLElement $xml, array $paths, mixed $default = null): mixed
     {
         foreach ($paths as $path) {
-            $parts = explode('/', $path);
-            $node = $xml;
-
-            $found = true;
-            foreach ($parts as $part) {
-                if (!isset($node->{$part})) {
-                    $found = false;
-                    break;
-                }
-                $node = $node->{$part};
-            }
-
-            if ($found) {
-                $value = trim((string)$node);
-                if ($value !== '') {
-                    return $value;
-                }
+            $found = $this->readPath($xml, $path);
+            if ($found !== null && $found !== '') {
+                return $found;
             }
         }
 
         return $default;
+    }
+
+    protected function readPath(\SimpleXMLElement $xml, string $path): ?string
+    {
+        $parts = explode('/', $path);
+        $node = $xml;
+
+        foreach ($parts as $part) {
+            if ($part === '') {
+                continue;
+            }
+
+            if ($part[0] === '@') {
+                $attrName = substr($part, 1);
+                $attrs = $node->attributes();
+
+                if (!isset($attrs[$attrName])) {
+                    return null;
+                }
+
+                return trim((string)$attrs[$attrName]);
+            }
+
+            if (!isset($node->{$part})) {
+                return null;
+            }
+
+            $node = $node->{$part};
+        }
+
+        return trim((string)$node);
     }
 
     protected function toBool(mixed $value): bool
