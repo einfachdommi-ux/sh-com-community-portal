@@ -1,31 +1,9 @@
 <?php
-
-use App\Core\Database;
-
-$isEdit = !empty($field['id']);
+$isEdit = ($mode ?? '') === 'edit';
+$field = $field ?? [];
 $action = $isEdit
-    ? '/fields/update/' . (int)$field['id']
+    ? '/fields/update/' . (int)($field['id'] ?? 0)
     : '/fields/store';
-
-$crops = Database::query("
-    SELECT name
-    FROM field_data_crops
-    ORDER BY name ASC
-")->fetchAll(PDO::FETCH_ASSOC);
-
-$monthOptions = Database::query("
-    SELECT value
-    FROM field_data_
-    WHERE type = 'planned_sowing_date'
-")->fetchAll(PDO::FETCH_ASSOC);
-
-$pendingOptions = Database::query("
-    SELECT value
-    FROM field_data_
-    WHERE type = 'pending_work'
-    ORDER BY value ASC
-")->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
@@ -33,13 +11,12 @@ $pendingOptions = Database::query("
     <h1 class="h3 mb-0"><?= $isEdit ? 'Feld bearbeiten' : 'Feld anlegen' ?></h1>
     <div class="text-muted small">Precision Farming</div>
   </div>
-  <a class="btn btn-outline-secondary" href="/fields">Zur Übersicht</a>
+  <a class="btn btn-outline-secondary" href="<?= e(base_url('/fields')) ?>">Zur Übersicht</a>
 </div>
 
-<form class="card border-0 shadow-sm" method="post" action="<?= e($action) ?>">
+<form class="card border-0 shadow-sm" method="post" action="<?= e(base_url($action)) ?>">
   <div class="card-body">
     <?= csrf_field() ?>
-
     <?php if ($isEdit): ?>
       <input type="hidden" name="id" value="<?= (int)($field['id'] ?? 0) ?>">
     <?php endif; ?>
@@ -47,22 +24,30 @@ $pendingOptions = Database::query("
     <div class="row g-3">
       <div class="col-12 col-md-6">
         <label class="form-label">Feld</label>
-        <input
-          class="form-control"
-          name="field_name"
-          required
-          value="<?= e((string)($field['field_name'] ?? '')) ?>"
-        >
+        <input class="form-control" name="field_name" required value="<?= e((string)($field['field_name'] ?? '')) ?>">
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label class="form-label">Hofzuweisung</label>
+        <select class="form-select" name="farm_id">
+          <option value="">— Kein Hof —</option>
+          <?php foreach (($farms ?? []) as $farm): ?>
+            <?php $farmId = (string)($farm['id'] ?? ''); ?>
+            <option value="<?= e($farmId) ?>" <?= ((string)($field['farm_id'] ?? '') === $farmId) ? 'selected' : '' ?>>
+              <?= e((string)($farm['name'] ?? ('Hof #' . $farmId))) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+        <div class="form-text">Hier kannst du das Feld einem Hof aus der Datenbank zuweisen.</div>
       </div>
 
       <div class="col-12 col-md-6">
         <label class="form-label">Geplante Aussaat</label>
         <select class="form-select" name="planned_sowing_date">
           <option value="">—</option>
-          <?php foreach ($monthOptions as $o): ?>
-            <?php $value = (string)($o['value'] ?? ''); ?>
-            <option value="<?= e($value) ?>" <?= ((string)($field['planned_sowing_date'] ?? '') === $value) ? 'selected' : '' ?>>
-              <?= e($value) ?>
+          <?php foreach (($monthOptions ?? []) as $o): ?>
+            <option value="<?= e((string)$o['value']) ?>" <?= ((string)($field['planned_sowing_date'] ?? '') === (string)$o['value']) ? 'selected' : '' ?>>
+              <?= e((string)$o['label']) ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -72,10 +57,9 @@ $pendingOptions = Database::query("
         <label class="form-label">Aktuelle Feldfrucht</label>
         <select class="form-select" name="current_crop">
           <option value="">—</option>
-          <?php foreach ($crops as $o): ?>
-            <?php $value = (string)($o['name'] ?? ''); ?>
-            <option value="<?= e($value) ?>" <?= ((string)($field['current_crop'] ?? '') === $value) ? 'selected' : '' ?>>
-              <?= e($value) ?>
+          <?php foreach (($crops ?? []) as $o): ?>
+            <option value="<?= e((string)$o['value']) ?>" <?= ((string)($field['current_crop'] ?? '') === (string)$o['value']) ? 'selected' : '' ?>>
+              <?= e((string)$o['label']) ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -85,10 +69,9 @@ $pendingOptions = Database::query("
         <label class="form-label">Geplante Feldfrucht</label>
         <select class="form-select" name="planned_crop">
           <option value="">—</option>
-          <?php foreach ($crops as $o): ?>
-            <?php $value = (string)($o['name'] ?? ''); ?>
-            <option value="<?= e($value) ?>" <?= ((string)($field['planned_crop'] ?? '') === $value) ? 'selected' : '' ?>>
-              <?= e($value) ?>
+          <?php foreach (($crops ?? []) as $o): ?>
+            <option value="<?= e((string)$o['value']) ?>" <?= ((string)($field['planned_crop'] ?? '') === (string)$o['value']) ? 'selected' : '' ?>>
+              <?= e((string)$o['label']) ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -98,10 +81,9 @@ $pendingOptions = Database::query("
         <label class="form-label">Anliegende Arbeiten</label>
         <select class="form-select" name="pending_work">
           <option value="">—</option>
-          <?php foreach ($pendingOptions as $o): ?>
-            <?php $value = (string)($o['value'] ?? ''); ?>
-            <option value="<?= e($value) ?>" <?= ((string)($field['pending_work'] ?? '') === $value) ? 'selected' : '' ?>>
-              <?= e($value) ?>
+          <?php foreach (($pendingOptions ?? []) as $o): ?>
+            <option value="<?= e((string)$o['value']) ?>" <?= ((string)($field['pending_work'] ?? '') === (string)$o['value']) ? 'selected' : '' ?>>
+              <?= e((string)$o['label']) ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -109,11 +91,7 @@ $pendingOptions = Database::query("
 
       <div class="col-12 col-md-6">
         <label class="form-label">Ertragsbonus</label>
-        <input
-          class="form-control"
-          name="yield_bonus"
-          value="<?= e((string)($field['yield_bonus'] ?? '')) ?>"
-        >
+        <input class="form-control" name="yield_bonus" value="<?= e((string)($field['yield_bonus'] ?? '')) ?>">
       </div>
 
       <div class="col-12">
@@ -123,7 +101,6 @@ $pendingOptions = Database::query("
 
       <div class="col-12">
         <div class="row g-2">
-
           <div class="col-6 col-md-2">
             <div class="form-check">
               <input type="hidden" name="fertilization_stage_1" value="0">
@@ -163,14 +140,13 @@ $pendingOptions = Database::query("
               <label class="form-check-label">Gewalzt</label>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
   <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2">
-    <a class="btn btn-outline-secondary" href="/fields">Abbrechen</a>
+    <a class="btn btn-outline-secondary" href="<?= e(base_url('/fields')) ?>">Abbrechen</a>
     <button class="btn btn-dark"><?= $isEdit ? 'Speichern' : 'Anlegen' ?></button>
   </div>
 </form>

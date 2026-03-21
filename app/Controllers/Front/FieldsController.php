@@ -1,9 +1,9 @@
 <?php
 namespace App\Controllers\Front;
 
-use App\Core\Auth;
-use App\Core\Controller;
 use App\Core\Database;
+use App\Core\Controller;
+use App\Core\Auth;
 use App\Models\Field;
 use App\Models\Farm;
 use PDO;
@@ -26,8 +26,18 @@ class FieldsController extends Controller
         return $user;
     }
 
-    protected function normalizeFieldData(array $input): array
+    protected function normalizeFieldData(array $input, ?array $existing = null): array
     {
+        $farmId = null;
+
+        if (array_key_exists('farm_id', $input)) {
+            $farmId = trim((string)($input['farm_id'] ?? '')) !== ''
+                ? (int)$input['farm_id']
+                : null;
+        } elseif ($existing && !empty($existing['farm_id'])) {
+            $farmId = (int)$existing['farm_id'];
+        }
+
         return [
             'field_name' => trim((string)($input['field_name'] ?? '')),
             'current_crop' => trim((string)($input['current_crop'] ?? '')),
@@ -40,10 +50,8 @@ class FieldsController extends Controller
             'rolled' => (int)($input['rolled'] ?? 0),
             'fertilization_stage_2' => (int)($input['fertilization_stage_2'] ?? 0),
             'yield_bonus' => trim((string)($input['yield_bonus'] ?? '')),
-            'pending_work' => trim((string)($input['pending_work'] ?? '')),
             'notes' => trim((string)($input['notes'] ?? '')),
-            'planned_sowing_date' => trim((string)($input['planned_sowing_date'] ?? '')),
-            'farm_id' => !empty($input['farm_id']) ? (int)$input['farm_id'] : null,
+            'farm_id' => $farmId,
         ];
     }
 
@@ -219,7 +227,7 @@ class FieldsController extends Controller
             return;
         }
 
-        $data = $this->normalizeFieldData($_POST);
+        $data = $this->normalizeFieldData($_POST, $existing);
 
         if ($data['field_name'] === '') {
             $_SESSION['flash_error'] = 'Bitte einen Feldnamen eingeben.';
